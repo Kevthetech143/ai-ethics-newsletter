@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  serverExternalPackages: ['pg'],
+  // No external packages needed - using serverless-compatible postgres.js
 };
 
 export default nextConfig;

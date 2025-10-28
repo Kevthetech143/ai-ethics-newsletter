@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import pool from '../../db';
+import sql from '../../db';
 
 export async function GET(request: NextRequest) {
   try {
@@ -7,8 +7,7 @@ export async function GET(request: NextRequest) {
     const minScore = parseFloat(searchParams.get('minScore') || '0.7');
     const limit = parseInt(searchParams.get('limit') || '50');
 
-    const result = await pool.query(
-      `
+    const articles = await sql`
       SELECT
         a.id,
         a.url,
@@ -28,16 +27,14 @@ export async function GET(request: NextRequest) {
       FROM articles a
       LEFT JOIN article_scores s ON a.id = s.article_id
       LEFT JOIN newsletter_items n ON a.id = n.article_id
-      WHERE s.overall_score >= $1
+      WHERE s.overall_score >= ${minScore}
       ORDER BY s.overall_score DESC, a.scraped_at DESC
-      LIMIT $2
-      `,
-      [minScore, limit]
-    );
+      LIMIT ${limit}
+    `;
 
     return NextResponse.json({
-      articles: result.rows,
-      count: result.rows.length
+      articles,
+      count: articles.length
     });
   } catch (error) {
     console.error('Fetch articles error:', error);

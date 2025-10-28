@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import pool from '../db';
+import sql from '../db';
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,20 +13,21 @@ export async function POST(request: NextRequest) {
     }
 
     // Create subscribers table if it doesn't exist
-    await pool.query(`
+    await sql`
       CREATE TABLE IF NOT EXISTS subscribers (
         id SERIAL PRIMARY KEY,
         email TEXT UNIQUE NOT NULL,
         subscribed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         active BOOLEAN DEFAULT TRUE
       );
-    `);
+    `;
 
     // Insert subscriber
-    await pool.query(
-      'INSERT INTO subscribers (email) VALUES ($1) ON CONFLICT (email) DO NOTHING',
-      [email.toLowerCase()]
-    );
+    await sql`
+      INSERT INTO subscribers (email)
+      VALUES (${email.toLowerCase()})
+      ON CONFLICT (email) DO NOTHING
+    `;
 
     return NextResponse.json({ success: true });
   } catch (error) {

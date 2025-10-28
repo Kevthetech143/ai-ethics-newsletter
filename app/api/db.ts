@@ -1,8 +1,8 @@
-import { Pool } from 'pg';
+import postgres from 'postgres';
 
-// Database connection pool for API routes (server-side only)
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
+// Database connection for API routes (serverless-compatible)
+const sql = postgres(process.env.DATABASE_URL || '', {
+  max: 1, // Serverless-friendly: single connection
 });
 
-export default pool;
+export default sql;
