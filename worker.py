@@ -74,18 +74,27 @@ def init_database():
 
 def run_rss_monitor():
     """Run RSS monitor script"""
-    print(f"[{datetime.now()}] 📡 Running RSS monitor...")
-    # TODO: Import and run rss_monitor.py
+    try:
+        from rss_monitor import fetch_rss_feeds
+        fetch_rss_feeds()
+    except Exception as e:
+        print(f"[{datetime.now()}] ❌ RSS monitor error: {e}")
 
 def run_ai_curator():
     """Run AI curator script"""
-    print(f"[{datetime.now()}] 🤖 Running AI curator...")
-    # TODO: Import and run ai_curator.py
+    try:
+        from ai_curator import score_articles
+        score_articles()
+    except Exception as e:
+        print(f"[{datetime.now()}] ❌ AI curator error: {e}")
 
 def run_newsletter_assembler():
     """Run newsletter assembler script"""
-    print(f"[{datetime.now()}] 📧 Running newsletter assembler...")
-    # TODO: Import and run newsletter_assembler.py
+    try:
+        from newsletter_assembler import assemble_newsletter
+        assemble_newsletter()
+    except Exception as e:
+        print(f"[{datetime.now()}] ❌ Newsletter assembler error: {e}")
 
 if __name__ == "__main__":
     print(f"[{datetime.now()}] 🚀 Background worker starting...")
