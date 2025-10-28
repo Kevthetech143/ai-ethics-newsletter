@@ -1,0 +1,7 @@
+FROM listmonk/listmonk:latest
+
+# Expose Listmonk default port
+EXPOSE 9000
+
+# Listmonk will use DATABASE_URL from environment
+CMD ["./listmonk"]
