@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { Client } from 'pg'
 
 export async function GET() {
   try {
@@ -11,9 +12,6 @@ export async function GET() {
         { status: 500 }
       )
     }
-
-    // Use Node.js pg library to run the migrations
-    const { Client } = require('pg')
     const client = new Client({
       connectionString: DATABASE_URL,
       ssl: { rejectUnauthorized: false }

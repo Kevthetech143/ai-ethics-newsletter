@@ -1,9 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  experimental: {
-    instrumentationHook: true,
-  },
+  serverExternalPackages: ['pg'],
 };
 
 export default nextConfig;
