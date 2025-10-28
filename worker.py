@@ -4,10 +4,14 @@ Render Background Worker - Handles database initialization and cron jobs
 """
 
 import os
+import sys
 import time
 import schedule
 import psycopg
 from datetime import datetime
+
+# Force unbuffered output for immediate log visibility
+sys.stdout.reconfigure(line_buffering=True)
 
 DATABASE_URL = os.environ.get('DATABASE_URL')
 ANTHROPIC_API_KEY = os.environ.get('ANTHROPIC_API_KEY')
