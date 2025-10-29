@@ -7,7 +7,7 @@ export async function GET(request: NextRequest) {
     const minScore = parseFloat(searchParams.get('minScore') || '0.7');
     const limit = parseInt(searchParams.get('limit') || '50');
 
-    const articles = await sql`
+    const results = await sql`
       SELECT
         a.id,
         a.url,
@@ -31,6 +31,15 @@ export async function GET(request: NextRequest) {
       ORDER BY s.overall_score DESC, a.scraped_at DESC
       LIMIT ${limit}
     `;
+
+    // Convert score strings to numbers for frontend
+    const articles = results.map(article => ({
+      ...article,
+      overall_score: parseFloat(article.overall_score),
+      relevance_score: parseFloat(article.relevance_score),
+      quality_score: parseFloat(article.quality_score),
+      novelty_score: parseFloat(article.novelty_score)
+    }));
 
     return NextResponse.json({
       articles,
