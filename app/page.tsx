@@ -27,6 +27,7 @@ export default function Home() {
 
       setStatus("success");
       setEmail("");
+      setTimeout(() => setStatus("idle"), 5000); // Clear success message after 5 seconds
     } catch (error) {
       console.error('Subscription error:', error);
       setStatus("error");

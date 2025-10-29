@@ -24,6 +24,8 @@ export default function ReviewDashboard() {
   const [loading, setLoading] = useState(true);
   const [minScore, setMinScore] = useState(0.7);
   const [processingId, setProcessingId] = useState<number | null>(null);
+  const [sendingNewsletter, setSendingNewsletter] = useState(false);
+  const [sendResult, setSendResult] = useState<string | null>(null);
 
   useEffect(() => {
     fetchArticles();
@@ -44,19 +46,55 @@ export default function ReviewDashboard() {
   const handleApprove = async (articleId: number, approved: boolean, notes?: string) => {
     setProcessingId(articleId);
     try {
-      const response = await fetch('/api/review/approve', {
+      const endpoint = approved ? '/api/review/approve' : '/api/review/reject';
+      const response = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ articleId, approved, notes })
+        body: JSON.stringify({ articleId, notes })
       });
 
       if (response.ok) {
         await fetchArticles(); // Refresh list
+      } else {
+        const error = await response.json();
+        alert(`Error: ${error.error || 'Failed to update article'}`);
       }
     } catch (error) {
       console.error('Error updating approval:', error);
+      alert('Network error. Please try again.');
     }
     setProcessingId(null);
+  };
+
+  const handleSendNewsletter = async () => {
+    if (!confirm('Send newsletter to all subscribers? This will email all approved articles that haven\'t been sent yet.')) {
+      return;
+    }
+
+    setSendingNewsletter(true);
+    setSendResult(null);
+
+    try {
+      const response = await fetch('/api/newsletter/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        setSendResult(`✅ Success! Sent ${result.articleCount} articles to ${result.subscriberCount} subscribers`);
+        await fetchArticles(); // Refresh to show sent status
+      } else {
+        setSendResult(`❌ Error: ${result.error}`);
+      }
+    } catch (error) {
+      console.error('Error sending newsletter:', error);
+      setSendResult('❌ Network error. Please try again.');
+    } finally {
+      setSendingNewsletter(false);
+      setTimeout(() => setSendResult(null), 8000);
+    }
   };
 
   const getScoreColor = (score: number) => {
@@ -82,8 +120,8 @@ export default function ReviewDashboard() {
           <h1 className="text-3xl font-bold text-gray-900">Newsletter Review Dashboard</h1>
           <p className="mt-2 text-gray-600">Review and approve AI-curated articles for the newsletter</p>
 
-          {/* Filters */}
-          <div className="mt-4 flex items-center gap-4">
+          {/* Filters and Actions */}
+          <div className="mt-4 flex flex-wrap items-center gap-4">
             <label className="text-sm text-gray-700">
               Minimum Score:
               <select
@@ -101,7 +139,25 @@ export default function ReviewDashboard() {
             <span className="text-sm text-gray-500">
               Showing {articles.length} articles
             </span>
+
+            {/* Send Newsletter Button */}
+            <button
+              onClick={handleSendNewsletter}
+              disabled={sendingNewsletter}
+              className="ml-auto px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {sendingNewsletter ? '📤 Sending...' : '📨 Send Newsletter'}
+            </button>
           </div>
+
+          {/* Send Result Message */}
+          {sendResult && (
+            <div className={`mt-3 p-3 rounded-lg ${
+              sendResult.startsWith('✅') ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'
+            }`}>
+              {sendResult}
+            </div>
+          )}
         </div>
       </div>
 
