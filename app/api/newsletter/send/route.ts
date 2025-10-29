@@ -176,10 +176,11 @@ export async function POST(request: Request) {
     // Generate email HTML
     const emailHTML = generateNewsletterHTML(articles);
 
-    // Send emails (batch send to all subscribers)
+    // Send emails (TEMPORARY: only to owner email for Resend test domain)
+    // TODO: Remove filter when custom domain is verified
     const { data, error } = await resend.emails.send({
       from: 'AI Ethics Newsletter <onboarding@resend.dev>',
-      to: subscribers.map(s => s.email),
+      to: ['talkers.winding_0w@icloud.com'],
       subject: `AI Ethics Digest – ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}`,
       html: emailHTML,
     });
