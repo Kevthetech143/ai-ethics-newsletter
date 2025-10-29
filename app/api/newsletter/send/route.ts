@@ -180,7 +180,7 @@ export async function POST(request: Request) {
     // TODO: Remove filter when custom domain is verified
     const { data, error } = await resend.emails.send({
       from: 'AI Ethics Newsletter <onboarding@resend.dev>',
-      to: ['talkers.winding_0w@icloud.com'],
+      to: ['kevmart143@gmail.com'],
       subject: `AI Ethics Digest – ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}`,
       html: emailHTML,
     });
