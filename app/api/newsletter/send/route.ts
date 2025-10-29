@@ -178,7 +178,7 @@ export async function POST(request: Request) {
 
     // Send emails (batch send to all subscribers)
     const { data, error } = await resend.emails.send({
-      from: 'AI Ethics Newsletter <newsletter@updates.yourdomain.com>',
+      from: 'AI Ethics Newsletter <onboarding@resend.dev>',
       to: subscribers.map(s => s.email),
       subject: `AI Ethics Digest – ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}`,
       html: emailHTML,
