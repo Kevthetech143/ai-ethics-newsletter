@@ -153,7 +153,7 @@ export async function POST(request: Request) {
     }
 
     // Convert scores to numbers
-    const articles = approvedArticles.map(article => ({
+    const articles = approvedArticles.map((article: any) => ({
       ...article,
       overall_score: parseFloat(article.overall_score),
       relevance_score: parseFloat(article.relevance_score),
